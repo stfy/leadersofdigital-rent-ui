@@ -1,0 +1,54 @@
+stages:
+  - quality
+  - build
+  - deploy
+ 
+variables:
+  CI_REGISTRY_PROJECT: /rent/rent-ui
+  HELM_REPOS_PATH: integrator1/helm
+  HELM_REPO_NAME: rent
+
+include:
+  - project: 'integrator1/devops/gitlab-ci-jobs'
+    ref: master
+    file: 'common/build-kaniko.gitlab-ci.yml'
+  - project: 'integrator1/devops/gitlab-ci-jobs'
+    ref: master
+    file: 'common/deploy-argocd.gitlab-ci.yml'
+  - project: 'integrator1/devops/gitlab-ci-jobs'
+    ref: master
+    file: 'common/sonarqube.gitlab-ci.yml'
+
+# check code quality
+code_quality:
+  extends:
+    - .check_code_quality
+  only:
+    - master
+    - merge_requests
+
+# build docker image 
+build:
+  extends:
+    - .build-kaniko
+  script:
+    - echo "registry=https://${NEXUS_SERVER}/repository/npm/" > $CI_PROJECT_DIR/.npmrc
+    - echo -e "\n//${NEXUS_SERVER}/repository/npm/:_authToken=NpmToken.${NEXUS_TOKEN}" >> $CI_PROJECT_DIR/.npmrc
+    - /kaniko/executor --cache=true --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile $IMAGE_TAGS $IMAGE_LABELS
+  only:
+    - master
+    - dev
+
+deploy-dev:
+  extends:
+    - .deploy-argocd
+  environment:
+    name: dev
+    url: https://rent.weintegrator.com
+  variables:
+    HELM_VALUES_FILE: values-dev.yaml
+    ARGOCD_APP_NAME: rent-dev
+  script:
+    - yq w -i $HELM_VALUES_FILE rent-ui.image.tag $CI_COMMIT_SHORT_SHA    
+  only:
+    - dev 
