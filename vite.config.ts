@@ -27,7 +27,7 @@ export default defineConfig({
                     proxy.on('proxyReq', onProxyReq)
                     proxy.on('proxyRes', onProxyRes)
                 },
-                rewrite: (path) => path.replace(/^\/api/, '')
+                // rewrite: (path) => path.replace(/^\/api/, '')
             }
         }
     }

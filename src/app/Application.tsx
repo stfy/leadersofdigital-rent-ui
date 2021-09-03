@@ -20,6 +20,7 @@ export class AirportApplication implements IBootstrapper {
     addHttpAuthMiddleware() {
         http.use(async (req) => {
             if (req.path.startsWith(ENDPOINTS.OAuth.token)) {
+                req.headers.set('Authorization', `Basic ZGVtby1jbGllbnQ6c2VjcmV0`)
                 return req
             }
 
