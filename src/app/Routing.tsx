@@ -8,8 +8,39 @@ import {LoginContainer} from "../components/LoginContainer";
 import {LandlordDashboard} from "../pages/Landlord/LandlordDashboard";
 import {TenantLandlordView} from "../pages/Tenant/TenantLandlordView";
 import {TenantView} from "../pages/Tenant/TenantView";
+import {useService} from "../core/decorators/service";
+import {ProfileService} from "../services/ProfileService";
 
 export const Routing = observer(function Routing() {
+    const profileService = useService(ProfileService)
+
+    const isLandlord = profileService.rolesInclude('LANDLORD')
+    const isTenant = profileService.rolesInclude('TENANT')
+
+    const landlordRoutes = (
+        <Switch>
+            <Route path={"/renters"}>
+                {({match}) => {
+                    return (
+                        <Switch>
+                            <Route path={match.path + '/:id'} component={TenantLandlordView}/>
+                            <Route path={match.path} exact component={LandlordDashboard}/>
+                        </Switch>
+                    )
+                }}
+            </Route>
+
+            <Redirect to={'/renters'}/>
+        </Switch>
+    );
+
+    const tenantRoutes = (
+        <Switch>
+            <Route path={'/dashboard'} component={TenantView}/>
+            <Redirect to={'/dashboard'}/>
+        </Switch>
+    )
+
     return (
         <AuthGuard fn={(s) => s === 'authenticated'}>
             {(authenticated) => {
@@ -24,22 +55,11 @@ export const Routing = observer(function Routing() {
                         </LoginContainer>
                     )
                 }
+
                 return (
                     <AuthorizedContainer>
-                        <Switch>
-                            <Route path={"/renters"}>
-                                {({match}) => {
-                                    return (
-                                        <Switch>
-                                            <Route path={match.path + '/:id'} component={TenantView}/>
-                                            <Route path={match.path} exact component={LandlordDashboard}/>
-                                        </Switch>
-                                    )
-                                }}
-                            </Route>
-
-                            <Redirect to={'/renters'}/>
-                        </Switch>
+                        {isTenant && tenantRoutes}
+                        {isLandlord && landlordRoutes}
                     </AuthorizedContainer>
                 )
             }}

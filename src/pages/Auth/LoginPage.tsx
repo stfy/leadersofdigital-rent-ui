@@ -15,7 +15,7 @@ export const LoginForm = observer(function LoginForm() {
 
     return (
         <MobxForm
-            values={{email: 'test@test12.com', password: 'test@test12.com'}}
+            values={{email: 'kofehaus', password: 'kofehaus'}}
             onSubmit={submitHandler}>
             <Stack spacing={4}>
                 <FormControl id="email">
@@ -23,7 +23,7 @@ export const LoginForm = observer(function LoginForm() {
                 </FormControl>
 
                 <FormControl id="password">
-                    <TextInput placeholder={'Пароль'} name={'password'}/>
+                    <TextInput placeholder={'Пароль'} type={'password'} name={'password'}/>
                 </FormControl>
 
                 <Flex width={'100%'} spacing={10}>

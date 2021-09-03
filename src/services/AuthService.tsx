@@ -4,27 +4,33 @@ import {ENDPOINTS} from "./api/endpoints";
 
 export type AuthStatus = 'guest' | 'authenticated';
 
-interface TokenResponse {
-    access: string;
-    refresh: string;
-}
+export type TToken = {
+    access_token: string;
+    token_type: string;
+    refresh_token: string;
+    expires_in: number;
+    scope: string;
+    jti: string;
+};
+
+
+
 
 interface IGrant {
     type: string;
-
     getBody(): { [key: string]: any, grant_type: string };
 }
 
 export class CredentialsGrant implements IGrant {
-    public type = 'credentials'
+    public type = 'password'
 
-    constructor(private email: string, private password: string) {
+    constructor(private username: string, private password: string) {
     }
 
     getBody(): any {
 
         return {
-            email: this.email,
+            username: this.username,
             password: this.password,
             grant_type: this.type
         }
@@ -62,9 +68,6 @@ export class PersistentStorage {
 }
 
 export class AuthService {
-
-
-
     @observable status: AuthStatus = 'guest';
 
     @computed
@@ -91,24 +94,22 @@ export class AuthService {
     authenticate(grant: IGrant) {
         this.requestStatus = 'pending'
 
-        return http.post<TokenResponse>(ENDPOINTS.OAuth.token, grant.getBody())
+        return http.post<TToken>(ENDPOINTS.OAuth.token, grant.getBody())
             .then((resp) => {
                 this.status = 'authenticated'
                 this.requestStatus = 'success'
 
-                this.token = resp.access;
-                this.refreshToken = resp.refresh;
+                this.token = resp.access_token;
+                this.refreshToken = resp.refresh_token;
 
-                this.persistentStorage.setItem('auth_token', resp.access)
-                this.persistentStorage.setItem('refresh_token', resp.refresh)
+                this.persistentStorage.setItem('auth_token', resp.access_token)
+                this.persistentStorage.setItem('refresh_token', resp.refresh_token)
             })
             .catch(() => {
                 this.status = 'guest';
                 this.requestStatus = 'error';
             })
-            .finally(() => {
-                this.status = 'authenticated'
-            })
+
     }
 
     @action
