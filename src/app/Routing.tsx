@@ -5,6 +5,9 @@ import {Redirect, Route, Switch} from "react-router-dom";
 import {LoginPage} from "../pages/Auth/LoginPage";
 import {AuthorizedContainer} from "../components/AuthorizedContainer";
 import {LoginContainer} from "../components/LoginContainer";
+import {LandlordDashboard} from "../pages/Landlord/LandlordDashboard";
+import {TenantLandlordView} from "../pages/Tenant/TenantLandlordView";
+import {TenantView} from "../pages/Tenant/TenantView";
 
 export const Routing = observer(function Routing() {
     return (
@@ -21,13 +24,21 @@ export const Routing = observer(function Routing() {
                         </LoginContainer>
                     )
                 }
-
                 return (
                     <AuthorizedContainer>
                         <Switch>
-                            <Route path={"/dashboard"} render={() => 'dashboard'}/>
+                            <Route path={"/renters"}>
+                                {({match}) => {
+                                    return (
+                                        <Switch>
+                                            <Route path={match.path + '/:id'} component={TenantView}/>
+                                            <Route path={match.path} exact component={LandlordDashboard}/>
+                                        </Switch>
+                                    )
+                                }}
+                            </Route>
 
-                            <Redirect to={'/dashboard'}/>
+                            <Redirect to={'/renters'}/>
                         </Switch>
                     </AuthorizedContainer>
                 )

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {ReactNode} from 'react';
 import {AuthService, AuthStatus} from "../../services/AuthService";
-import {Redirect} from "react-router-dom";
 import {useService} from "../decorators/service";
 import {observer} from "mobx-react";
 
@@ -16,14 +15,10 @@ export const AuthGuard = observer(
         const {fn: authorize, children: renderChildren} = props;
 
         const auth = useService(AuthService)
-        const authorized = authorize(auth.status)
+        const authorized = auth.isAuthorized
 
-
-        console.log(auth)
-
-
-        if (auth.status === 'initial' || auth.status === 'pending') {
-            return null
+        if (auth.authStatus === 'initial' || auth.authStatus === 'pending') {
+            return null;
         }
 
         return <>{renderChildren(authorized)}</>

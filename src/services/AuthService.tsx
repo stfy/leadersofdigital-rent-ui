@@ -1,18 +1,8 @@
-import {action, makeAutoObservable, observable} from 'mobx'
+import {action, computed, makeAutoObservable, observable} from 'mobx'
 import {http} from "../core/transport/http";
+import {ENDPOINTS} from "./api/endpoints";
 
-interface IUser {
-
-
-}
-
-
-interface IAuthService {
-
-
-}
-
-export type AuthStatus = 'initial' | 'guest' | 'authenticated' | 'pending';
+export type AuthStatus = 'guest' | 'authenticated';
 
 interface TokenResponse {
     access: string;
@@ -63,13 +53,30 @@ export class PersistentStorage {
     public getItem(key: string): string {
         return localStorage.getItem(key) as string
     }
+
+    public deleteItem(...keys: string[]) {
+        for (const key of keys) {
+            localStorage.removeItem(key);
+        }
+    }
 }
 
 export class AuthService {
-    @observable status: AuthStatus = 'initial';
+
+
+
+    @observable status: AuthStatus = 'guest';
+
+    @computed
+    public get isAuthorized() {
+        return this.status === 'authenticated'
+    } ;
 
     @observable token: string;
     @observable refreshToken: string;
+
+    @observable authStatus: 'initial' | 'pending' | 'success' | 'error' = 'initial'
+    @observable requestStatus: 'initial' | 'pending' | 'success' | 'error' = 'initial'
 
     constructor(
         private persistentStorage: PersistentStorage
@@ -77,17 +84,17 @@ export class AuthService {
         this.refreshToken = this.persistentStorage.getItem('refresh_token')
         this.token = this.persistentStorage.getItem('auth_token')
 
-
         makeAutoObservable(this)
     }
 
     @action
     authenticate(grant: IGrant) {
-        this.status = 'pending'
+        this.requestStatus = 'pending'
 
-        return http.post<TokenResponse>('/token', grant.getBody())
+        return http.post<TokenResponse>(ENDPOINTS.OAuth.token, grant.getBody())
             .then((resp) => {
                 this.status = 'authenticated'
+                this.requestStatus = 'success'
 
                 this.token = resp.access;
                 this.refreshToken = resp.refresh;
@@ -97,12 +104,24 @@ export class AuthService {
             })
             .catch(() => {
                 this.status = 'guest';
+                this.requestStatus = 'error';
+            })
+            .finally(() => {
+                this.status = 'authenticated'
             })
     }
-
 
     @action
     unauthenticate() {
         this.status = 'guest'
+    }
+
+    @action
+    clear() {
+        this.token = null;
+        this.refreshToken = null;
+
+        this.status = 'guest'
+        this.persistentStorage.deleteItem('auth_token', 'refresh_token')
     }
 }

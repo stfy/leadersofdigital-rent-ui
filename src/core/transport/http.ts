@@ -1,5 +1,8 @@
+const baseUrl = process.env.API_URL || window.location.origin;
+
 interface HttpClientOptions extends RequestInit {
-    baseUrl: string,
+    baseUrl: string;
+    timeout: number;
 }
 
 type HttpMiddleware = (req: HttpRequest) => Promise<HttpRequest> | HttpRequest;
@@ -28,7 +31,8 @@ interface HttpClient {
 }
 
 export const http: HttpClient = client.call({} as HttpClient, ({
-    baseUrl: process.env.API_URL || window.location.host,
+    baseUrl: baseUrl,
+    timeout: 5000,
 }))
 
 
@@ -38,7 +42,10 @@ function client(this: HttpClient, options: HttpClientOptions): HttpClient {
 
     const requestFactory = (method: string) => {
         return async (path: string, ...args: any[]) => {
-            const req = new HttpRequest()
+            const req = new HttpRequest();
+            const controller = new AbortController()
+
+            const timeoutId = setTimeout(() => controller.abort(), 5000)
 
             const {baseUrl, headers, body, method: _, ...fetchConfig} = this.options
             const requestOptions: HttpRequest = args[0] instanceof HttpRequest
@@ -71,8 +78,9 @@ function client(this: HttpClient, options: HttpClientOptions): HttpClient {
             const requestInit: RequestInit = {
                 headers: req.headers,
                 body: req.body,
-                method: req.method,
+                signal: controller.signal,
                 ...fetchConfig,
+                method: req.method
             }
 
             return fetch(prepareUrl(req.path, req.params || {}, baseUrl), requestInit)

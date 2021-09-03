@@ -1,5 +1,5 @@
 import * as React from "react";
-import {WithSubnavigation} from "./Navbar/Navbar";
+import {Navigation} from "./Navbar/Navbar";
 import {Box, Flex, useColorModeValue} from "@chakra-ui/react";
 import {observer} from "mobx-react";
 
@@ -9,13 +9,18 @@ export const AuthorizedContainer = observer(function AuthorizedContainer(props: 
 
 
     return (
-        <Box w="100%">
-            <WithSubnavigation/>
+        <Box w="100%" justifyContent={'center'}>
+            <Navigation/>
 
-            <Flex
-                minH={'100vh'}
-                justify={'center'}
-                bg={useColorModeValue('gray.50', 'gray.800')}>{children}</Flex>
+            <Flex justify={'center'}>
+                <Flex
+
+                    maxW={'container.lg'}
+                    minH={'100vh'}
+                    justify={'center'}
+                    grow={1}
+                >{children}</Flex>
+            </Flex>
         </Box>
     )
 })

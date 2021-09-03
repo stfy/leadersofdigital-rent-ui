@@ -1,8 +1,9 @@
 import * as React from "react";
 
 import {action, makeAutoObservable, observable, reaction, toJS} from "mobx";
-import {Input} from "@chakra-ui/react";
 import {observer} from "mobx-react";
+import {Input} from "../../ui/TextInput";
+import {InputProps as BaseInputProps} from "@chakra-ui/react";
 
 type IValidator = () => void
 
@@ -98,13 +99,13 @@ export function MobxForm<P>(props: MobxFormProps<P>) {
     )
 }
 
-
 /// Input Bindings
+export function TextInput(props: { name: string } & BaseInputProps) {
+    const {name, ...inputProps} = props;
 
-export function TextInput(props: { name: string }) {
     const parentControl = React.useContext(MobxFormContext)
 
-    const [inputControl] = React.useState(new MobxControlInput(parentControl.value[props.name], []));
+    const [inputControl] = React.useState(new MobxControlInput(parentControl.value[name], []));
 
     React.useEffect(() => {
         inputControl.parent = parentControl
@@ -112,15 +113,14 @@ export function TextInput(props: { name: string }) {
         return reaction(() => inputControl.value, (value) => {
             parentControl.writeValue({
                 ...parentControl.value,
-                [props.name]: value
+                [name]: value
             })
         })
     }, [])
 
-
     return (
         <MobxInput
-            component={Input}
+            component={(props) => <Input {...inputProps}{...props}/>}
             inputControl={inputControl}
         />
     )

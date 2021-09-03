@@ -1,20 +1,12 @@
 import * as React from 'react';
-import {
-    Box,
-    Button,
-    Checkbox,
-    FormControl,
-    FormLabel,
-    Heading,
-    Link,
-    Stack,
-    useColorModeValue,
-} from '@chakra-ui/react';
+import {Box, Flex, FormControl, Heading, Link, Spinner, Stack, Text, useColorModeValue,} from '@chakra-ui/react';
 import {MobxForm, TextInput} from "../../core/form/ControlInput";
 import {useService} from "../../core/decorators/service";
 import {AuthService, CredentialsGrant} from "../../services/AuthService";
+import {Button} from "../../ui/Button";
+import {observer} from "mobx-react";
 
-export function LoginForm() {
+export const LoginForm = observer(function LoginForm() {
     const authService = useService(AuthService)
 
     const submitHandler = (form: { email: string, password: string }) => {
@@ -27,36 +19,33 @@ export function LoginForm() {
             onSubmit={submitHandler}>
             <Stack spacing={4}>
                 <FormControl id="email">
-                    <FormLabel>Email address</FormLabel>
-                    <TextInput name={'email'}/>
+                    <TextInput placeholder={'Логин'} name={'email'}/>
                 </FormControl>
+
                 <FormControl id="password">
-                    <FormLabel>Password</FormLabel>
-                    <TextInput name={'password'}/>
+                    <TextInput placeholder={'Пароль'} name={'password'}/>
                 </FormControl>
-                <Stack spacing={10}>
-                    <Stack
-                        direction={{base: 'column', sm: 'row'}}
-                        align={'start'}
-                        justify={'space-between'}>
-                        <Checkbox>Remember me</Checkbox>
-                        <Link color={'blue.400'}>Forgot password?</Link>
-                    </Stack>
-                    <Button
-                        bg={'blue.400'}
-                        type={'submit'}
-                        color={'white'}
-                        _hover={{
-                            bg: 'blue.500',
-                        }}>
-                        Sign in
-                    </Button>
-                </Stack>
+
+                <Flex width={'100%'} spacing={10}>
+                    <Flex grow={1} shrink={1} align={'center'}>
+                        <Link><Text fontWeight={'bold'}>Забыли пароль?</Text></Link>
+                    </Flex>
+
+                    <Flex grow={1} shrink={1}>
+                        {authService.requestStatus === 'pending'
+                            ? <Spinner/>
+                            : (
+                                <Button type={'submit'} width={'100%'}>
+                                    Войти
+                                </Button>
+                            )
+                        }
+                    </Flex>
+                </Flex>
             </Stack>
         </MobxForm>
     )
-}
-
+})
 
 export function LoginPage() {
     return (
