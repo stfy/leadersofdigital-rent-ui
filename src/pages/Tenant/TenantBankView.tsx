@@ -1,41 +1,70 @@
 import * as React from 'react'
 import {observer} from "mobx-react";
+import {useHistory, useRouteMatch} from "react-router-dom";
 import {
-    Box,
-    CircularProgress,
-    Divider,
+    chakra,
+    Divider as BaseDivider,
     Flex,
+    FormControl,
+    FormLabel,
     Heading,
-    Spacer,
+    Link,
     Spinner,
     Stack,
     Tag,
     TagLabel,
     Text
 } from "@chakra-ui/react";
-import {RentReceipts} from "./RentReceipts";
-import {RentReceiptsHistory} from "./RentReceiptsHistory";
-import {RentActionHistory} from "./RentActionHistory";
-import {RentList} from "../../services/RentList";
 import {useService} from "../../core/decorators/service";
-import {ProfileService} from "../../services/ProfileService";
-import {AcceptConditions} from "./AcceptConditions";
+import {RentList} from "../../services/RentList";
 import {useRentStatus} from "../../hooks/status";
+import {MobxForm, TextInput} from "../../core/form/ControlInput";
+import {Button} from "../../ui/Button";
+import {ConditionsService} from "../../services/ConditionsService";
 
-export const TenantView = observer(function TenantView(_props) {
+const Divider = chakra(BaseDivider, {
+    baseStyle: {
+        height: '2px',
+        width: '100%',
+        bg: 'black',
+        opacity: 1,
+        position: 'relative',
+        top: '4px'
+    }
+})
+
+export const TenantBankView = observer(function TenantBankView(_props) {
+    const match = useRouteMatch<{ id: string }>()
+
+    const history = useHistory<{ from: Location }>()
+
+    const backLink = React.useMemo(() => {
+        return history.location.state?.from?.pathname || '/renters';
+    }, [])
+
     const rentList = useService(RentList)
 
-    const profile = useService(ProfileService)
-
     React.useEffect(() => {
+        if (rentList.requestStatus == 'success' || rentList.requestStatus == 'pending') {
+            return
+        }
+
         rentList.getList()
     }, [])
 
     const rent = React.useMemo(() => {
-        return rentList.list.find(r => r.tenantUUID === profile.info.companyId)
-    }, [])
+        return rentList.list.find((r) => r.id === match.params.id)
+    }, [rentList.list])
 
-    const status = useRentStatus(rent);
+
+    const status = useRentStatus(rent)
+    
+    const condService = useService(ConditionsService)
+
+    function submitHandler(res) {
+        condService.enterCreditConditions(match.params.id, res)
+    }
+
 
     if (rentList.requestStatus === 'pending') {
         return (
@@ -45,67 +74,29 @@ export const TenantView = observer(function TenantView(_props) {
         )
     }
 
-
     if (!rent) {
-        return null;
+        return (
+            <Flex padding={8}>
+                Арендатор не найден
+            </Flex>
+        )
     }
-
 
     return (
         <Stack width={'100%'} padding={8} spacing={'36px'}>
-            {/*<Flex>*/}
-            {/*    <Stack>*/}
-            {/*        <Text>Терминал F, Этаж 2, Место F235</Text>*/}
-
-            {/*        <Heading as={'h1'}>{rent.tenantName}</Heading>*/}
-            {/*    </Stack>*/}
-
-            {/*</Flex>*/}
-
-            {/*<Flex width={'100%'}>*/}
-            {/*    <Box bg={'#F5F4F2'} padding={4} flex={'1 0 48%'}>*/}
-            {/*        <Flex>*/}
-            {/*            <CircularProgress value={75} size={'160px'} color={'orange-bg'}/>*/}
-            {/*            <Stack marginLeft={8}>*/}
-            {/*                <Stack>*/}
-            {/*                    <Text fontWeight={500} fontSize={18}>Платеж до 12.09.2021</Text>*/}
-            {/*                    <Text fontWeight={700} fontSize={32} marginTop={0}>520 000 ₽</Text>*/}
-            {/*                </Stack>*/}
-            {/*                <Stack>*/}
-            {/*                    <Text fontWeight={500} fontSize={18}>Собрано</Text>*/}
-            {/*                    <Text fontWeight={700} fontSize={32} marginTop={0}>360 000 ₽</Text>*/}
-            {/*                </Stack>*/}
-            {/*            </Stack>*/}
-            {/*        </Flex>*/}
-            {/*    </Box>*/}
-
-            {/*    <Spacer/>*/}
-
-            {/*    <Box bg={'#F5F4F2'} padding={4} flex={'1 0 48%'}>*/}
-            {/*        <Flex>*/}
-            {/*            <CircularProgress value={35} size={'160px'} color={'#FF0010'}/>*/}
-            {/*            <Stack marginLeft={8}>*/}
-            {/*                <Stack>*/}
-            {/*                    <Text fontWeight={500} fontSize={18}>Задолженность до 12.02.2019</Text>*/}
-            {/*                    <Text fontWeight={700} fontSize={32} marginTop={0}>120 000 ₽</Text>*/}
-            {/*                </Stack>*/}
-            {/*                <Stack>*/}
-            {/*                    <Text fontWeight={500} fontSize={18}>Собрано</Text>*/}
-            {/*                    <Text fontWeight={700} fontSize={32} marginTop={0}>32 000 ₽</Text>*/}
-            {/*                </Stack>*/}
-            {/*            </Stack>*/}
-            {/*        </Flex>*/}
-            {/*    </Box>*/}
-            {/*</Flex>*/}
+            <Flex align={'center'}>
+                <Link fontWeight={500} onClick={() => history.push(backLink)}>Назад</Link>
+                <Divider marginLeft={4}/>
+            </Flex>
 
             <Flex>
-                <Stack flexGrow={1}>
+                <Stack>
                     <Text>Терминал F, Этаж 2, Место F235</Text>
 
                     <Heading as={'h1'}>{rent.tenantName}</Heading>
                 </Stack>
 
-                <Stack marginLeft={8} flexBasis={'60%'} flexGrow={1} >
+                <Stack marginLeft={8} flexBasis={'60%'} flexGrow={1}>
                     <Heading as={'h2'} fontSize={32}>Данные о соглашении</Heading>
 
                     <Flex height={'48px'} width={'100%'}/>
@@ -150,14 +141,17 @@ export const TenantView = observer(function TenantView(_props) {
                     <Flex>
                         <Stack flexBasis={'50%'} spacing="24px">
                             <Stack>
-                                <Text color={'grey'} fontSize={15} fontWeight={500}>Минимально гарантированный платеж</Text>
-                                <Text color={'black'} fontSize={18} fontWeight={500}>320 000 ₽</Text>
+                                <Text color={'grey'} fontSize={15} fontWeight={500}>Минимально гарантированный
+                                    платеж</Text>
+                                <Text color={'black'} fontSize={18}
+                                      fontWeight={500}>{rent.conditions.minGuaranteedConcession} ₽</Text>
                             </Stack>
                         </Stack>
                         <Stack spacing="24px">
                             <Stack>
                                 <Text color={'grey'} fontSize={15} fontWeight={500}>Конфессионный коэффициент</Text>
-                                <Text color={'black'} fontSize={18} fontWeight={500}>3%</Text>
+                                <Text color={'black'} fontSize={18}
+                                      fontWeight={500}>{rent.conditions.concessionPercent}%</Text>
                             </Stack>
 
                         </Stack>
@@ -167,14 +161,40 @@ export const TenantView = observer(function TenantView(_props) {
 
             <Divider/>
 
-            <AcceptConditions {...rent}/>
-
-            <Divider/>
-
             <Stack spacing={'24px'}>
                 <Heading as={'h2'} fontSize={32}>Кредитование</Heading>
 
-                <Flex>
+                {rent.status === 'NEW' ? (
+                    <MobxForm
+                        values={{interestRate: 0, limit: 500000, earningCreditPercent: 2.5}}
+                        onSubmit={submitHandler}>
+                        <Stack spacing={'12px'}>
+                            <FormControl id="interestRate">
+                                <FormLabel>Процентная ставка по кредиту*</FormLabel>
+                                <TextInput placeholder={'Процентная ставка по кредиту*'} type={'number'}
+                                           name={'interestRate'}/>
+                            </FormControl>
+
+                            <FormControl id="limit">
+                                <FormLabel>Кредитный лимит*</FormLabel>
+                                <TextInput placeholder={'Кредитный лимит*'} type={'number'} name={'limit'}/>
+                            </FormControl>
+
+                            <FormControl id="earningCreditPercent">
+                                <FormLabel>% Отчислений с выручки в счет погашения займа*</FormLabel>
+
+                                <TextInput placeholder={'% Отчислений с выручки в счет погашения займа*'}
+                                           type={'number'}
+                                           name={'earningCreditPercent'}/>
+                            </FormControl>
+
+
+                            <Flex>
+                                <Button type={'submit'}>Подтвердить</Button>
+                            </Flex>
+                        </Stack>
+                    </MobxForm>
+                ) : (<Flex>
                     <Stack flexBasis={'50%'}>
                         <Stack>
                             <Text color={'grey'} fontSize={15} fontWeight={500}>Кредитный лимит</Text>
@@ -182,7 +202,8 @@ export const TenantView = observer(function TenantView(_props) {
                         </Stack>
 
                         <Stack>
-                            <Text color={'grey'} fontSize={15} fontWeight={500}>Отчислений с выручки в счет погашения
+                            <Text color={'grey'} fontSize={15} fontWeight={500}>Отчислений с выручки в счет
+                                погашения
                                 займа</Text>
                             <Text color={'black'} fontSize={18} fontWeight={500}>1,5%</Text>
                         </Stack>
@@ -201,29 +222,17 @@ export const TenantView = observer(function TenantView(_props) {
                             <Text color={'black'} fontSize={18} fontWeight={500}>320 000 ₽</Text>
                         </Stack>
                     </Stack>
-                </Flex>
+                </Flex>)}
 
             </Stack>
 
             <Divider/>
 
-            <Stack spacing={'24px'}>
-                <Heading as={'h2'} fontSize={32}>Транзакции</Heading>
+            {/*<Stack spacing={'24px'}>*/}
+            {/*    <Heading as={'h2'} fontSize={32}>Действия и комментарии</Heading>*/}
 
-                <RentReceipts {...rent}/>
-
-                <Flex>
-                    <RentReceiptsHistory {...rent}/>
-                </Flex>
-            </Stack>
-
-            <Divider/>
-
-            <Stack spacing={'24px'}>
-                <Heading as={'h2'} fontSize={32}>Действия и комментарии</Heading>
-
-                <RentActionHistory/>
-            </Stack>
+            {/*    <RentActionHistory/>*/}
+            {/*</Stack>*/}
         </Stack>
     );
 })

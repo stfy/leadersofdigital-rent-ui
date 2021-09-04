@@ -18,6 +18,8 @@ import {RentReceiptsHistory} from "./RentReceiptsHistory";
 import {RentActionHistory} from "./RentActionHistory";
 import {useService} from "../../core/decorators/service";
 import {RentList} from "../../services/RentList";
+import {useRentStatus} from "../../hooks/status";
+import {AcceptConditions} from "./AcceptConditions";
 
 const Divider = chakra(BaseDivider, {
     baseStyle: {
@@ -51,21 +53,10 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
 
     const rent = React.useMemo(() => {
         return rentList.list.find((r) => r.id === match.params.id)
-    }, [])
+    }, [rentList.list])
 
 
-    const status = React.useMemo(() => {
-        if (!rent) return;
-
-        const text = (rent.status === 'NEW') && 'На рассмотрении'
-        const statusName = 'pending'
-
-        return {
-            text,
-            statusName
-        }
-    }, [rent])
-
+    const status = useRentStatus(rent)
 
     if (rentList.requestStatus === 'pending') {
         return (
@@ -142,14 +133,17 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
                     <Flex>
                         <Stack flexBasis={'50%'} spacing="24px">
                             <Stack>
-                                <Text color={'grey'} fontSize={15} fontWeight={500}>Минимально гарантированный платеж</Text>
-                                <Text color={'black'} fontSize={18} fontWeight={500}>320 000 ₽</Text>
+                                <Text color={'grey'} fontSize={15} fontWeight={500}>Минимально гарантированный
+                                    платеж</Text>
+                                <Text color={'black'} fontSize={18}
+                                      fontWeight={500}>{rent.conditions.minGuaranteedConcession} ₽</Text>
                             </Stack>
                         </Stack>
                         <Stack spacing="24px">
                             <Stack>
                                 <Text color={'grey'} fontSize={15} fontWeight={500}>Конфессионный коэффициент</Text>
-                                <Text color={'black'} fontSize={18} fontWeight={500}>3%</Text>
+                                <Text color={'black'} fontSize={18}
+                                      fontWeight={500}>{rent.conditions.concessionPercent}%</Text>
                             </Stack>
 
                         </Stack>

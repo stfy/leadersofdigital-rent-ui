@@ -10,6 +10,8 @@ import {TenantLandlordView} from "../pages/Tenant/TenantLandlordView";
 import {TenantView} from "../pages/Tenant/TenantView";
 import {useService} from "../core/decorators/service";
 import {ProfileService} from "../services/ProfileService";
+import {BankDashboard} from "../pages/Landlord/BankDashboard";
+import {TenantBankView} from "../pages/Tenant/TenantBankView";
 
 export const Routing = observer(function Routing() {
     const profileService = useService(ProfileService)
@@ -44,8 +46,18 @@ export const Routing = observer(function Routing() {
 
     const bankRoutes = (
         <Switch>
-            <Route path={'/dashboard'} render={() => 'Bank screen'}/>
-            <Redirect to={'/dashboard'}/>
+            <Route path={"/renters"}>
+                {({match}) => {
+                    return (
+                        <Switch>
+                            <Route path={match.path + '/:id'} component={TenantBankView}/>
+                            <Route path={match.path} exact component={BankDashboard}/>
+                        </Switch>
+                    )
+                }}
+            </Route>
+
+            <Redirect to={'/renters'}/>
         </Switch>
     )
 

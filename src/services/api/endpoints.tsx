@@ -3,11 +3,14 @@ const OAuth = {
 }
 
 const Identity = {
-    userInfo: '/api/v0/vst-identity/persons/info'
+    userInfo: '/api/v0/vst-identity/persons/info',
+
 }
 
 const Api = {
-    list: '/api/v0/rent-app/rent'
+    list: '/api/v0/rent-app/rent',
+    enterCreditConditions: '/api/v0/rent-app/rent/{id}/enterCreditConditions',
+    accept: '/api/v0/rent-app/rent/{id}/acceptCreditConditions'
 }
 
 export const ENDPOINTS = {

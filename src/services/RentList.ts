@@ -15,7 +15,9 @@ export type IRent = {
         "endDate": string,
         "interestRate": number,
         "limit": number,
-        "paymentAmount": number
+        "paymentAmount": number,
+        concessionPercent: number,
+        minGuaranteedConcession: number
     },
     "creditDebt": number,
     "events": [
@@ -30,7 +32,7 @@ export type IRent = {
         }
     ],
     "id": string,
-    "status": "NEW",
+    "status": "NEW" | 'BANK_PROPOSED' | 'ACCEPTED',
     "tenantAddress": string,
     "tenantName": string,
     "tenantUUID": string,
@@ -52,6 +54,19 @@ export class RentList {
     getList() {
         this.requestStatus = 'pending';
 
+        return http.get<IRent[]>(ENDPOINTS.Api.list)
+            .then(list => {
+                this.list = list;
+                this.requestStatus = 'success'
+            })
+            .catch((e) => {
+                this.error = e;
+                this.requestStatus = 'error'
+            })
+    }
+
+    @action
+    updateList() {
         return http.get<IRent[]>(ENDPOINTS.Api.list)
             .then(list => {
                 this.list = list;
