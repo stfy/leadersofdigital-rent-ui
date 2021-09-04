@@ -45,7 +45,7 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
         if (rentList.requestStatus == 'success' || rentList.requestStatus == 'pending') {
             return
         }
-        
+
         rentList.getList()
     }, [])
 
@@ -97,11 +97,13 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
                     <Heading as={'h1'}>{rent.tenantName}</Heading>
                 </Stack>
 
-                <Stack marginLeft={8} flexBasis={'65%'} spacing="48px">
+                <Stack marginLeft={8} flexBasis={'60%'} flexGrow={1}>
                     <Heading as={'h2'} fontSize={32}>Данные о соглашении</Heading>
 
+                    <Flex height={'48px'} width={'100%'}/>
+
                     <Flex>
-                        <Stack flexBasis={'50%'}>
+                        <Stack flexBasis={'50%'} spacing="24px">
                             <Stack>
                                 <Text color={'grey'} fontSize={15} fontWeight={500}>Срок действия договора аренды</Text>
                                 <Text color={'black'} fontSize={18}
@@ -134,9 +136,25 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
                             </Stack>
                         </Stack>
                     </Flex>
+
+                    <Flex height={'12px'} width={'100%'}/>
+
+                    <Flex>
+                        <Stack flexBasis={'50%'} spacing="24px">
+                            <Stack>
+                                <Text color={'grey'} fontSize={15} fontWeight={500}>Минимально гарантированный платеж</Text>
+                                <Text color={'black'} fontSize={18} fontWeight={500}>320 000 ₽</Text>
+                            </Stack>
+                        </Stack>
+                        <Stack spacing="24px">
+                            <Stack>
+                                <Text color={'grey'} fontSize={15} fontWeight={500}>Конфессионный коэффициент</Text>
+                                <Text color={'black'} fontSize={18} fontWeight={500}>3%</Text>
+                            </Stack>
+
+                        </Stack>
+                    </Flex>
                 </Stack>
-
-
             </Flex>
 
             <Divider/>
