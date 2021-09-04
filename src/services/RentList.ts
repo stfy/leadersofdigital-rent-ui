@@ -20,6 +20,7 @@ export type IRent = {
         minGuaranteedConcession: number
     },
     "creditDebt": number,
+    concessionDebt: number,
     "events": [
         {
             "amount": number,
