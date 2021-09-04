@@ -19,6 +19,9 @@ function ChangeContext(props: IRent & {children: (r: IRent) => any}) {
     return children(rent)
 }
 
+function numberWithSpaces(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
 
 export const RentReceipts: React.FC<IRent> = observer(function RentReceipts(rent) {
     const list = useService(RentList)
@@ -55,8 +58,8 @@ export const RentReceipts: React.FC<IRent> = observer(function RentReceipts(rent
                                     height={2}/>
 
                                 <Flex justify={'space-between'}>
-                                    <Text>{Math.round(rent.conditions.paymentAmount - rent.totalDebt)} ₽</Text>
-                                    <Text>{Math.round(rent.conditions.paymentAmount)} ₽</Text>
+                                    <Text>{numberWithSpaces(Math.round(rent.conditions.paymentAmount - rent.totalDebt))} ₽</Text>
+                                    <Text>{numberWithSpaces(Math.round(rent.conditions.paymentAmount))} ₽</Text>
                                 </Flex>
                             </Stack>
 
@@ -69,8 +72,8 @@ export const RentReceipts: React.FC<IRent> = observer(function RentReceipts(rent
                                     height={2}/>
 
                                 <Flex justify={'space-between'}>
-                                    <Text>{Math.round(rent.conditions.minGuaranteedConcession - rent.concessionDebt)} ₽</Text>
-                                    <Text>{Math.round(rent.conditions.minGuaranteedConcession)} ₽</Text>
+                                    <Text>{numberWithSpaces(Math.round(rent.conditions.minGuaranteedConcession - rent.concessionDebt))} ₽</Text>
+                                    <Text>{numberWithSpaces(Math.round(rent.conditions.minGuaranteedConcession))} ₽</Text>
                                 </Flex>
                             </Stack>
 
@@ -82,8 +85,8 @@ export const RentReceipts: React.FC<IRent> = observer(function RentReceipts(rent
                                           height={2}/>
 
                                 <Flex justify={'space-between'}>
-                                    <Text>{Math.round(rent.creditDebt)} ₽</Text>
-                                    <Text>{Math.round(rent.conditions.limit)} ₽</Text>
+                                    <Text>{numberWithSpaces(Math.round(rent.creditDebt))} ₽</Text>
+                                    <Text>{numberWithSpaces(Math.round(rent.conditions.limit))} ₽</Text>
                                 </Flex>
                             </Stack>
 
