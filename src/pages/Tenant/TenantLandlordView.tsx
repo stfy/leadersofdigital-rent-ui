@@ -41,6 +41,10 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
 
     const rentList = useService(RentList)
 
+    React.useEffect(() => {
+        rentList.getList()
+    }, [])
+
     const rent = React.useMemo(() => {
         return rentList.list.find((r) => r.id === match.params.id)
     }, [])
@@ -59,10 +63,19 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
     }, [rent])
 
 
-    if (rentList.list.length === 0) {
+
+    if (rentList.requestStatus === 'pending') {
         return (
             <Flex padding={8}>
                 <Spinner size={'xl'}/>
+            </Flex>
+        )
+    }
+
+    if (!rent) {
+        return (
+            <Flex padding={8}>
+                Арендатор не найден
             </Flex>
         )
     }
