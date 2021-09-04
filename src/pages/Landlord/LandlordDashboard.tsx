@@ -40,7 +40,6 @@ export const LandlordDashboard = observer(function LandlordDashboard() {
             <Tabs variant="rentersList" colorScheme="green">
                 <TabList>
                     <Tab>Списком</Tab>
-                    <Tab>На карте</Tab>
                 </TabList>
 
                 <Flex position={'relative'} marginTop={4} marginBottom={4}>
@@ -50,7 +49,6 @@ export const LandlordDashboard = observer(function LandlordDashboard() {
 
                 <TabPanels p={0}>
                     <TabPanel>{list}</TabPanel>
-                    <TabPanel>TODO: Вклинить мапу</TabPanel>
                 </TabPanels>
             </Tabs>
 

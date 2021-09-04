@@ -186,11 +186,11 @@ export const TenantView = observer(function TenantView(_props) {
                             <Text color={'black'} fontSize={18} fontWeight={500}>{rent.conditions.interestRate} %</Text>
                         </Stack>
 
-                        <Stack>
-                            <Text color={'grey'} fontSize={15} fontWeight={500}>Прогнозируемый размер
-                                задолженности </Text>
-                            <Text color={'black'} fontSize={18} fontWeight={500}>320 000 ₽</Text>
-                        </Stack>
+                        {/*<Stack>*/}
+                        {/*    <Text color={'grey'} fontSize={15} fontWeight={500}>Прогнозируемый размер*/}
+                        {/*        задолженности </Text>*/}
+                        {/*    <Text color={'black'} fontSize={18} fontWeight={500}>320 000 ₽</Text>*/}
+                        {/*</Stack>*/}
                     </Stack>
                 </Flex>
             </Stack>

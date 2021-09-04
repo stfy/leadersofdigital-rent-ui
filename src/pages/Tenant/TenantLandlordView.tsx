@@ -141,11 +141,10 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
                         </Stack>
                         <Stack spacing="24px">
                             <Stack>
-                                <Text color={'grey'} fontSize={15} fontWeight={500}>Концессионный коэффициент/Text>
+                                <Text color={'grey'} fontSize={15} fontWeight={500}>Концессионный коэффициент</Text>
                                 <Text color={'black'} fontSize={18}
                                       fontWeight={500}>{rent.conditions.concessionPercent}%</Text>
                             </Stack>
-
                         </Stack>
                     </Flex>
                 </Stack>
@@ -172,13 +171,13 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
                     <Stack flexBasis={'50%'}>
                         <Stack>
                             <Text color={'grey'} fontSize={15} fontWeight={500}>Кредитный лимит</Text>
-                            <Text color={'black'} fontSize={18} fontWeight={500}>520 000 ₽</Text>
+                            <Text color={'black'} fontSize={18} fontWeight={500}>{rent.conditions.limit} ₽</Text>
                         </Stack>
 
                         <Stack>
                             <Text color={'grey'} fontSize={15} fontWeight={500}>Отчислений с выручки в счет погашения
                                 займа</Text>
-                            <Text color={'black'} fontSize={18} fontWeight={500}>1,5%</Text>
+                            <Text color={'black'} fontSize={18} fontWeight={500}>{rent.conditions.earningCreditPercent} %</Text>
                         </Stack>
                     </Stack>
 
@@ -187,12 +186,6 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
                         <Stack>
                             <Text color={'grey'} fontSize={15} fontWeight={500}>Процентная ставка по кредиту </Text>
                             <Text color={'black'} fontSize={18} fontWeight={500}>7,5%</Text>
-                        </Stack>
-
-                        <Stack>
-                            <Text color={'grey'} fontSize={15} fontWeight={500}>Прогнозируемый размер
-                                задолженности </Text>
-                            <Text color={'black'} fontSize={18} fontWeight={500}>320 000 ₽</Text>
                         </Stack>
                     </Stack>
                 </Flex>

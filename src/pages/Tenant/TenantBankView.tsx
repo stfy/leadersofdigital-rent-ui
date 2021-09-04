@@ -157,7 +157,7 @@ export const TenantBankView = observer(function TenantBankView(_props) {
                         </Stack>
                         <Stack spacing="24px">
                             <Stack>
-                                <Text color={'grey'} fontSize={15} fontWeight={500}>Концессионный коэффициент/Text>
+                                <Text color={'grey'} fontSize={15} fontWeight={500}>Концессионный коэффициент</Text>
                                 <Text color={'black'} fontSize={18}
                                       fontWeight={500}>{rent.conditions.concessionPercent}%</Text>
                             </Stack>
@@ -193,11 +193,11 @@ export const TenantBankView = observer(function TenantBankView(_props) {
                             <Text color={'black'} fontSize={18} fontWeight={500}>{rent.conditions.interestRate} %</Text>
                         </Stack>
 
-                        <Stack>
-                            <Text color={'grey'} fontSize={15} fontWeight={500}>Прогнозируемый размер
-                                задолженности </Text>
-                            <Text color={'black'} fontSize={18} fontWeight={500}>320 000 ₽</Text>
-                        </Stack>
+                        {/*<Stack>*/}
+                        {/*    <Text color={'grey'} fontSize={15} fontWeight={500}>Прогнозируемый размер*/}
+                        {/*        задолженности </Text>*/}
+                        {/*    <Text color={'black'} fontSize={18} fontWeight={500}>320 000 ₽</Text>*/}
+                        {/*</Stack>*/}
                     </Stack>
                 </Flex>
 
@@ -233,14 +233,6 @@ export const TenantBankView = observer(function TenantBankView(_props) {
                     </Stack>
                 </MobxForm>
             </Stack>
-
-            <Divider/>
-
-            {/*<Stack spacing={'24px'}>*/}
-            {/*    <Heading as={'h2'} fontSize={32}>Действия и комментарии</Heading>*/}
-
-            {/*    <RentActionHistory/>*/}
-            {/*</Stack>*/}
         </Stack>
     );
 })

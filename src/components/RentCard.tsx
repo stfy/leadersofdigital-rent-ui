@@ -3,6 +3,7 @@ import {Flex, Link, Progress, Stack, Tag, TagLabel, Text} from "@chakra-ui/react
 import {useHistory} from "react-router-dom";
 import {IRent} from "../services/RentList";
 import {useRentStatus} from "../hooks/status";
+import {useOriginal} from "../hooks/useOriginal";
 
 
 export function RentCard(props: IRent & { order: number }) {
@@ -20,6 +21,9 @@ export function RentCard(props: IRent & { order: number }) {
     }, [])
 
     const status = useRentStatus(props);
+
+
+    const [original, ChangeContext] = useOriginal(props)
 
     return (
         <Stack
@@ -39,7 +43,6 @@ export function RentCard(props: IRent & { order: number }) {
                 }
             }
         >
-
             <Tag position={'absolute'} top={4} right={4} variant={status.statusName}>
                 <TagLabel>{status.text}</TagLabel>
             </Tag>
@@ -53,12 +56,20 @@ export function RentCard(props: IRent & { order: number }) {
             <Stack width={'100%'} padding={4}>
                 <Text>Арендная плата за месяц</Text>
 
-                <Progress value={(props.totalEarnings / props.conditions.paymentAmount) * 100} variant={'black'}
-                          colorScheme={'orange'}
-                          height={1}/>
+                <ChangeContext {...original}>
+                    {props => {
+
+                        return (
+                            <Progress value={(props.totalDebt / props.conditions.paymentAmount) * 100} variant={'black'}
+                                      colorScheme={'orange'}
+                                      height={1}/>
+                        )
+                    }}
+                </ChangeContext>
+
 
                 <Flex justify={'space-between'}>
-                    <Text>{props.totalEarnings} ₽</Text>
+                    <Text>{props.totalDebt} ₽</Text>
                     <Text>{props.conditions.paymentAmount} ₽</Text>
                 </Flex>
             </Stack>

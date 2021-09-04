@@ -45,10 +45,26 @@ const columns = [
         isNumeric: true,
     },
     {
-        Header: "Отчисление",
+        Header: "В счет аренды",
         Cell: ({value}) => (<Text fontWeight={'700'}>{String(value)}</Text>),
         accessor: (row: IRent['events'][0]) => {
             return `${row.debtPart} ₽`
+        },
+        isNumeric: true
+    },
+    {
+        Header: "В счет концессии",
+        Cell: ({value}) => (<Text fontWeight={'700'}>{String(value)}</Text>),
+        accessor: (row: IRent['events'][0]) => {
+            return `${row.concessionPart} ₽`
+        },
+        isNumeric: true
+    },
+    {
+        Header: "В счет кредита",
+        Cell: ({value}) => (<Text fontWeight={'700'}>{String(value)}</Text>),
+        accessor: (row: IRent['events'][0]) => {
+            return `${row.creditPart} ₽`
         },
         isNumeric: true
     },
