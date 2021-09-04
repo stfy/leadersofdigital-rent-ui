@@ -1,18 +1,67 @@
 import * as React from 'react'
 import {observer} from "mobx-react";
-import {Box, CircularProgress, Divider, Flex, Heading, Spacer, Stack, Text} from "@chakra-ui/react";
+import {
+    Box,
+    CircularProgress,
+    Divider,
+    Flex,
+    Heading,
+    Spacer,
+    Spinner,
+    Stack,
+    Tag,
+    TagLabel,
+    Text
+} from "@chakra-ui/react";
 import {RentReceipts} from "./RentReceipts";
 import {RentReceiptsHistory} from "./RentReceiptsHistory";
 import {RentActionHistory} from "./RentActionHistory";
+import {RentList} from "../../services/RentList";
+import {useService} from "../../core/decorators/service";
+import {ProfileService} from "../../services/ProfileService";
 
 export const TenantView = observer(function TenantView(_props) {
+    const rentList = useService(RentList)
+
+    const profile = useService(ProfileService)
+
+    React.useEffect(() => {
+        rentList.getList()
+    }, [])
+
+    const rent = React.useMemo(() => {
+        return rentList.list.find(r => r.tenantUUID === profile.info.companyId)
+    }, [])
+
+    const status = React.useMemo(() => {
+        if (!rent) return;
+
+        const text = (rent.status === 'NEW') && 'На рассмотрении'
+        const statusName = 'pending'
+
+        return {
+            text,
+            statusName
+        }
+    }, [rent])
+
+
+    if (rentList.requestStatus === 'pending') {
+        return (
+            <Flex padding={8}>
+                <Spinner size={'xl'}/>
+            </Flex>
+        )
+    }
+
+
     return (
         <Stack width={'100%'} padding={8} spacing={'36px'}>
             <Flex>
                 <Stack>
                     <Text>Терминал F, Этаж 2, Место F235</Text>
 
-                    <Heading as={'h1'}>Beluga Caviar Bar</Heading>
+                    <Heading as={'h1'}>{rent.tenantName}</Heading>
                 </Stack>
 
             </Flex>
@@ -61,24 +110,29 @@ export const TenantView = observer(function TenantView(_props) {
                     <Stack flexBasis={'50%'}>
                         <Stack>
                             <Text color={'grey'} fontSize={15} fontWeight={500}>Срок действия договора аренды</Text>
-                            <Text color={'black'} fontSize={18} fontWeight={500}>12.02.2019 – 12.02.2022</Text>
+                            <Text color={'black'} fontSize={18}
+                                  fontWeight={500}>{rent.conditions.date} – {rent.conditions.endDate}</Text>
                         </Stack>
 
                         <Stack>
                             <Text color={'grey'} fontSize={15} fontWeight={500}>Ежемесячная стоимость аренды</Text>
-                            <Text color={'black'} fontSize={18} fontWeight={500}>520 000 ₽ / мес.</Text>
+                            <Text color={'black'} fontSize={18} fontWeight={500}>{rent.conditions.paymentAmount} ₽ /
+                                мес.</Text>
                         </Stack>
 
                         <Stack>
                             <Text color={'grey'} fontSize={15} fontWeight={500}>Отчислений с выручки</Text>
-                            <Text color={'black'} fontSize={18} fontWeight={500}>1,5% / день</Text>
+                            <Text color={'black'} fontSize={18} fontWeight={500}>{rent.conditions.earningPercent}% /
+                                день</Text>
                         </Stack>
                     </Stack>
 
                     <Stack spacing="24px">
                         <Stack>
                             <Text color={'grey'} fontSize={15} fontWeight={500}>Статус</Text>
-                            <Text color={'black'} fontSize={18} fontWeight={500}>Подтверждено</Text>
+                            <Tag variant={status.statusName}>
+                                <TagLabel>{status.text}</TagLabel>
+                            </Tag>
                         </Stack>
                         <Stack>
                             <Text color={'grey'} fontSize={15} fontWeight={500}>Дата платежа по аренде</Text>
@@ -129,10 +183,10 @@ export const TenantView = observer(function TenantView(_props) {
             <Stack spacing={'24px'}>
                 <Heading as={'h2'} fontSize={32}>Транзакции</Heading>
 
-                <RentReceipts/>
+                <RentReceipts {...rent}/>
 
                 <Flex>
-                    <RentReceiptsHistory/>
+                    <RentReceiptsHistory {...rent}/>
                 </Flex>
             </Stack>
 

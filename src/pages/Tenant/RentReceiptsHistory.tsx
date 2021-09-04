@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {observer} from "mobx-react";
 import {useSortBy, useTable} from "react-table"
-import {chakra, Stack, Table, Tbody, Td as BaseTd, Tr} from "@chakra-ui/react"
+import {chakra, Stack, Table, Tbody, Td as BaseTd, Text, Th, Thead, Tr} from "@chakra-ui/react"
 import {useService} from "../../core/decorators/service";
 import {IRent, RentList} from "../../services/RentList";
 import {useRouteMatch} from "react-router-dom";
@@ -19,7 +19,7 @@ function convertDate(date: Date) {
 
 const columns = [
     {
-        Header: "To convert",
+        Header: "Дата",
         accessor: (row: IRent['events'][0]) => {
             const date = new Date(row.date)
             return convertDate(date)
@@ -27,7 +27,7 @@ const columns = [
         },
     },
     {
-        Header: "Into",
+        Header: "Действие",
         accessor: (row: IRent['events'][0]) => {
             console.log()
             if (row.type === 'PAYMENT') {
@@ -38,25 +38,20 @@ const columns = [
             return row.type
         },
     },
-
-
-
     {
-        Header: "Multiply by",
+        Header: "Сумма операции",
         accessor: (row: IRent['events'][0]) => {
-            console.log()
-            return `Отчисление: ${row.debtPart} ₽`
+            return `${row.amount} ₽`
         },
         isNumeric: true,
     },
-
     {
-        Header: "Multiply ",
+        Header: "Отчисление",
+        Cell: ({ value }) => (<Text fontWeight={'700'}>{String(value)}</Text>),
         accessor: (row: IRent['events'][0]) => {
-            console.log()
-            return `Сумма операции: ${row.amount} ₽`
+            return `${row.debtPart} ₽`
         },
-        isNumeric: true,
+        isNumeric: true
     },
 ]
 
@@ -66,18 +61,7 @@ const Td = chakra(BaseTd, {
     }
 })
 
-export const RentReceiptsHistory = observer(function RentReceiptsHistory() {
-    const rentList = useService(RentList)
-
-    const match = useRouteMatch<{ id: string }>()
-
-    const rent = React.useMemo(() => {
-        const rent = rentList.list.find((r) => r.id === match.params.id)
-
-        return rent;
-    }, [])
-
-
+export const RentReceiptsHistory: React.FC<IRent> = observer(function RentReceiptsHistory(rent: IRent) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -89,6 +73,19 @@ export const RentReceiptsHistory = observer(function RentReceiptsHistory() {
     return (
         <Stack width={'100%'} maxH={'265px'} overflow={'auto'}>
             <Table {...getTableProps()} overflow={'auto'}>
+                <Thead>
+                    {headerGroups.map((headerGroup) => (
+                        <Tr {...headerGroup.getHeaderGroupProps()}>
+                            {headerGroup.headers.map((column) => (
+                                <Th  {...column.getHeaderProps((column as any).getSortByToggleProps())} isNumeric={(column as any).isNumeric}>
+                                    {column.render("Header")}
+                                </Th>
+                            ))}
+                        </Tr>
+                    ))}
+                </Thead>
+
+
                 <Tbody {...getTableBodyProps()} >
                     {rows.map((row) => {
                         prepareRow(row)

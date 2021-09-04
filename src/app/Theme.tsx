@@ -12,9 +12,16 @@ export const AirportTheme = {
     components: {
         Progress: {
             baseStyle: {
-                track: {bg: 'black'},
+                track: {bg: 'white'},
                 filledTrack: {bg: '#FFAC02'}
             },
+
+            variants: {
+                black: {
+                    track: {bg: 'black'},
+                    filledTrack: {bg: '#FFAC02'}
+                }
+            }
         },
         Divider: {
             baseStyle: {

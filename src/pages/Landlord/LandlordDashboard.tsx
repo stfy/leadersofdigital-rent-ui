@@ -132,7 +132,7 @@ function RentCard(props: IRent & { order: number }) {
             <Stack width={'100%'} padding={4}>
                 <Text>Арендная плата за месяц</Text>
 
-                <Progress value={(props.totalEarnings / props.conditions.paymentAmount) * 100} colorScheme={'orange'}
+                <Progress value={(props.totalEarnings / props.conditions.paymentAmount) * 100 } variant={'black'} colorScheme={'orange'}
                           height={1}/>
 
                 <Flex justify={'space-between'}>
@@ -140,7 +140,6 @@ function RentCard(props: IRent & { order: number }) {
                     <Text>{props.conditions.paymentAmount} ₽</Text>
                 </Flex>
             </Stack>
-
         </Stack>
     )
 }

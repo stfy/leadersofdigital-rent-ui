@@ -16,6 +16,7 @@ export const Routing = observer(function Routing() {
 
     const isLandlord = profileService.rolesInclude('LANDLORD')
     const isTenant = profileService.rolesInclude('TENANT')
+    const isBank = profileService.rolesInclude('BANK')
 
     const landlordRoutes = (
         <Switch>
@@ -41,6 +42,14 @@ export const Routing = observer(function Routing() {
         </Switch>
     )
 
+    const bankRoutes = (
+        <Switch>
+            <Route path={'/dashboard'} render={() => 'Bank screen'}/>
+            <Redirect to={'/dashboard'}/>
+        </Switch>
+    )
+
+
     return (
         <AuthGuard fn={(s) => s === 'authenticated'}>
             {(authenticated) => {
@@ -60,6 +69,7 @@ export const Routing = observer(function Routing() {
                     <AuthorizedContainer>
                         {isTenant && tenantRoutes}
                         {isLandlord && landlordRoutes}
+                        {isBank && bankRoutes}
                     </AuthorizedContainer>
                 )
             }}

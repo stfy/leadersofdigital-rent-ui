@@ -42,9 +42,7 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
     const rentList = useService(RentList)
 
     const rent = React.useMemo(() => {
-        const rent = rentList.list.find((r) => r.id === match.params.id)
-
-        return rent;
+        return rentList.list.find((r) => r.id === match.params.id)
     }, [])
 
 
@@ -82,7 +80,6 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
 
                     <Heading as={'h1'}>{rent.tenantName}</Heading>
                 </Stack>
-
 
                 <Stack marginLeft={8} flexBasis={'65%'} spacing="48px">
                     <Heading as={'h2'} fontSize={32}>Данные о соглашении</Heading>
@@ -131,10 +128,10 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
             <Stack spacing={'24px'}>
                 <Heading as={'h2'} fontSize={32}>Транзакции</Heading>
 
-                <RentReceipts/>
+                <RentReceipts {...rent}/>
 
                 <Flex>
-                    <RentReceiptsHistory/>
+                    <RentReceiptsHistory {...rent}/>
                 </Flex>
             </Stack>
 
