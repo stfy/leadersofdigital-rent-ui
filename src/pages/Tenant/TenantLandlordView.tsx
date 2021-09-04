@@ -1,7 +1,18 @@
 import * as React from 'react'
 import {observer} from "mobx-react";
 import {useHistory, useRouteMatch} from "react-router-dom";
-import {chakra, Divider as BaseDivider, Flex, Heading, Link, Stack, Tag, TagLabel, Text} from "@chakra-ui/react";
+import {
+    chakra,
+    Divider as BaseDivider,
+    Flex,
+    Heading,
+    Link,
+    Spinner,
+    Stack,
+    Tag,
+    TagLabel,
+    Text
+} from "@chakra-ui/react";
 import {RentReceipts} from "./RentReceipts";
 import {RentReceiptsHistory} from "./RentReceiptsHistory";
 import {RentActionHistory} from "./RentActionHistory";
@@ -22,7 +33,7 @@ const Divider = chakra(BaseDivider, {
 export const TenantLandlordView = observer(function TenantLandlordView(_props) {
     const match = useRouteMatch<{ id: string }>()
 
-    const history = useHistory<{from : Location}>()
+    const history = useHistory<{ from: Location }>()
 
     const backLink = React.useMemo(() => {
         return history.location.state?.from?.pathname || '/renters';
@@ -34,10 +45,12 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
         const rent = rentList.list.find((r) => r.id === match.params.id)
 
         return rent;
-    },[])
+    }, [])
 
 
     const status = React.useMemo(() => {
+        if (!rent) return;
+
         const text = (rent.status === 'NEW') && 'На рассмотрении'
         const statusName = 'pending'
 
@@ -46,6 +59,15 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
             statusName
         }
     }, [rent])
+
+
+    if (rentList.list.length === 0) {
+        return (
+            <Flex padding={8}>
+                <Spinner size={'xl'}/>
+            </Flex>
+        )
+    }
 
     return (
         <Stack width={'100%'} padding={8} spacing={'36px'}>
@@ -69,17 +91,20 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
                         <Stack flexBasis={'50%'}>
                             <Stack>
                                 <Text color={'grey'} fontSize={15} fontWeight={500}>Срок действия договора аренды</Text>
-                                <Text color={'black'} fontSize={18} fontWeight={500}>{rent.conditions.date} – {rent.conditions.endDate}</Text>
+                                <Text color={'black'} fontSize={18}
+                                      fontWeight={500}>{rent.conditions.date} – {rent.conditions.endDate}</Text>
                             </Stack>
 
                             <Stack>
                                 <Text color={'grey'} fontSize={15} fontWeight={500}>Ежемесячная стоимость аренды</Text>
-                                <Text color={'black'} fontSize={18} fontWeight={500}>{rent.conditions.paymentAmount} ₽ / мес.</Text>
+                                <Text color={'black'} fontSize={18} fontWeight={500}>{rent.conditions.paymentAmount} ₽ /
+                                    мес.</Text>
                             </Stack>
 
                             <Stack>
                                 <Text color={'grey'} fontSize={15} fontWeight={500}>Отчислений с выручки</Text>
-                                <Text color={'black'} fontSize={18} fontWeight={500}>{rent.conditions.earningPercent}% / день</Text>
+                                <Text color={'black'} fontSize={18} fontWeight={500}>{rent.conditions.earningPercent}% /
+                                    день</Text>
                             </Stack>
                         </Stack>
 
