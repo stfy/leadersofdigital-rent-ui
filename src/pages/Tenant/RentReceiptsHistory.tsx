@@ -2,63 +2,60 @@ import * as React from 'react'
 import {observer} from "mobx-react";
 import {useSortBy, useTable} from "react-table"
 import {chakra, Stack, Table, Tbody, Td as BaseTd, Tr} from "@chakra-ui/react"
+import {useService} from "../../core/decorators/service";
+import {IRent, RentList} from "../../services/RentList";
+import {useRouteMatch} from "react-router-dom";
 
-const data = [
-    {
-        date: "12.09.2021",
-        action: "Начисления от выручки",
-        value: '20 000 ₽',
-    },
-    {
-        date: "11.09.2021",
-        action: "Начисления от выручки",
-        value: '12 000 ₽',
-    },
-    {
-        date: "12.09.2021",
-        action: "Начисления от выручки",
-        value: '20 000 ₽',
-    },
-    {
-        date: "11.09.2021",
-        action: "Начисления от выручки",
-        value: '12 000 ₽',
-    },
-    {
-        date: "12.09.2021",
-        action: "Начисления от выручки",
-        value: '20 000 ₽',
-    },
-    {
-        date: "11.09.2021",
-        action: "Начисления от выручки",
-        value: '12 000 ₽',
-    },
-    {
-        date: "12.09.2021",
-        action: "Начисления от выручки",
-        value: '20 000 ₽',
-    },
-    {
-        date: "11.09.2021",
-        action: "Начисления от выручки",
-        value: '12 000 ₽',
-    },
+function convertDate(date: Date) {
+    var yyyy = date.getFullYear().toString();
+    var mm = (date.getMonth() + 1).toString();
+    var dd = date.getDate().toString();
 
+    var mmChars = mm.split('');
+    var ddChars = dd.split('');
 
-]
+    return yyyy + '-' + (mmChars[1] ? mm : "0" + mmChars[0]) + '-' + (ddChars[1] ? dd : "0" + ddChars[0]);
+}
+
 const columns = [
     {
         Header: "To convert",
-        accessor: "date",
+        accessor: (row: IRent['events'][0]) => {
+            const date = new Date(row.date)
+            return convertDate(date)
+            return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+        },
     },
     {
         Header: "Into",
-        accessor: "action",
+        accessor: (row: IRent['events'][0]) => {
+            console.log()
+            if (row.type === 'PAYMENT') {
+
+                return 'Начисления от выручки'
+            }
+
+            return row.type
+        },
     },
+
+
+
     {
         Header: "Multiply by",
-        accessor: "value",
+        accessor: (row: IRent['events'][0]) => {
+            console.log()
+            return `Отчисление: ${row.debtPart} ₽`
+        },
+        isNumeric: true,
+    },
+
+    {
+        Header: "Multiply ",
+        accessor: (row: IRent['events'][0]) => {
+            console.log()
+            return `Сумма операции: ${row.amount} ₽`
+        },
         isNumeric: true,
     },
 ]
@@ -70,13 +67,24 @@ const Td = chakra(BaseTd, {
 })
 
 export const RentReceiptsHistory = observer(function RentReceiptsHistory() {
+    const rentList = useService(RentList)
+
+    const match = useRouteMatch<{ id: string }>()
+
+    const rent = React.useMemo(() => {
+        const rent = rentList.list.find((r) => r.id === match.params.id)
+
+        return rent;
+    }, [])
+
+
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
         rows,
         prepareRow,
-    } = useTable({columns, data}, useSortBy)
+    } = useTable({columns, data: rent.events}, useSortBy)
 
     return (
         <Stack width={'100%'} maxH={'265px'} overflow={'auto'}>

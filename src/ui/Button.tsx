@@ -14,7 +14,7 @@ export const Button = chakra(BaseButton, {
             boxShadow: `3px 3px black`
         },
         _focus: {
-            bg: '#CC8A02'
+            bg: '#DE751C'
         }
     }
 })

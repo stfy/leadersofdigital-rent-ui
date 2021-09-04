@@ -1,4 +1,4 @@
-import "@fontsource/roboto-condensed"
+import './fonts/stylesheet.css'
 
 import React from 'react'
 import {BrowserRouter} from "react-router-dom"

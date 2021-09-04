@@ -6,7 +6,12 @@ const Identity = {
     userInfo: '/api/v0/vst-identity/persons/info'
 }
 
+const Api = {
+    list: '/api/v0/rent-app/rent'
+}
+
 export const ENDPOINTS = {
     OAuth,
-    Identity
+    Identity,
+    Api
 }

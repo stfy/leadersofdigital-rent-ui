@@ -2,7 +2,8 @@ import * as React from 'react';
 import {observer} from "mobx-react";
 import {
     chakra,
-    Flex, Grid,
+    Flex,
+    Grid,
     Heading,
     Link,
     Progress,
@@ -14,12 +15,13 @@ import {
     Tabs,
     Tag,
     TagLabel,
-    Text,
-    Wrap
+    Text
 } from "@chakra-ui/react";
 import {useHistory} from "react-router-dom";
 import {Input} from "../../ui/TextInput";
 import {SearchIcon} from "@chakra-ui/icons";
+import {useService} from "../../core/decorators/service";
+import {IRent, RentList} from "../../services/RentList";
 
 
 const SearchInput = chakra(Input, {
@@ -31,13 +33,19 @@ const SearchInput = chakra(Input, {
 })
 
 export const LandlordDashboard = observer(function LandlordDashboard() {
+    const rentList = useService(RentList);
+
+    React.useEffect(() => {
+        rentList.getList()
+
+    }, [])
+
     const list = (
         <Flex width={'100%'} grow={1} shrink={0}>
             <Grid marginTop={4} templateColumns="repeat(2, 1fr)" width={'100%'} gap={4}>
-                <RentCard/>
-                <RentCard/>
-                <RentCard/>
-                <RentCard/>
+                {rentList.list.map((r, num) => {
+                    return <RentCard key={r.id} {...r} order={num}/>
+                })}
             </Grid>
         </Flex>
     )
@@ -67,14 +75,29 @@ export const LandlordDashboard = observer(function LandlordDashboard() {
     )
 })
 
-function RentCard() {
+function RentCard(props: IRent & { order: number }) {
     const history = useHistory();
 
     function handleClick() {
-        history.push('/renters/xsaf', {
+        history.push(`/renters/${props.id}`, {
             from: history.location
         });
     }
+
+    const order = React.useMemo(() => {
+
+        return 100 + props.order;
+    }, [])
+
+    const status = React.useMemo(() => {
+        const text = (props.status === 'NEW') && 'На рассмотрении'
+        const statusName = 'pending'
+
+        return {
+            text,
+            statusName
+        }
+    }, [])
 
     return (
         <Stack
@@ -82,7 +105,7 @@ function RentCard() {
             grow={1}
             shrink={0}
             border={'1px solid black'}
-            height={'265px'}
+            height={'285px'}
             bgColor={'white'}
             position={'relative'}
             cursor={'pointer'}
@@ -96,24 +119,25 @@ function RentCard() {
             }
         >
 
-            <Tag position={'absolute'} top={4} right={4} variant="confirmed">
-                <TagLabel>Подтверждено</TagLabel>
+            <Tag position={'absolute'} top={4} right={4} variant={status.statusName}>
+                <TagLabel>{status.text}</TagLabel>
             </Tag>
 
             <Stack padding={4}>
-                <Text fontWeight={'500'} fontSize={18}>Терминал F, Этаж 2, Место F235</Text>
-                <Link as={Text} fontWeight={'700'} fontSize={32}>ARENDATOR</Link>
-                <Text>520 р/мес. Осталось 8 мес.</Text>
+                <Text fontWeight={'500'} fontSize={18} maxW={'150px'}>Терминал F, Этаж 2, Место F{order}</Text>
+                <Link as={Text} fontWeight={'700'} fontSize={32}>{props.tenantName}</Link>
+                <Text>{props.conditions.date} - {props.conditions.endDate}</Text>
             </Stack>
 
             <Stack width={'100%'} padding={4}>
                 <Text>Арендная плата за месяц</Text>
 
-                <Progress value={80} colorScheme={'orange'} height={1}/>
+                <Progress value={(props.totalEarnings / props.conditions.paymentAmount) * 100} colorScheme={'orange'}
+                          height={1}/>
 
                 <Flex justify={'space-between'}>
-                    <Text>362 534 ₽</Text>
-                    <Text>520 000 ₽</Text>
+                    <Text>{props.totalEarnings} ₽</Text>
+                    <Text>{props.conditions.paymentAmount} ₽</Text>
                 </Flex>
             </Stack>
 

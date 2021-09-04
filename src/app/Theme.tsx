@@ -1,12 +1,13 @@
 export const AirportTheme = {
     colors: {
         'orange-bg': '#FFAC02',
-        'input-bg': '#F5F4F2'
+        'input-bg': '#F5F4F2',
+        black: '#06111A'
     },
     fonts: {
-        body: "Roboto Condensed",
-        heading: "Roboto Condensed",
-        link: "Roboto Condensed"
+        body: "DIN Pro, Roboto Condensed, sans-serif",
+        heading: "DIN Pro, Roboto Condensed, sans-serif",
+        link: "DIN Pro, Roboto Condensed, sans-serif"
     },
     components: {
         Progress: {
