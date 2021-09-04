@@ -141,7 +141,7 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
                         </Stack>
                         <Stack spacing="24px">
                             <Stack>
-                                <Text color={'grey'} fontSize={15} fontWeight={500}>Конфессионный коэффициент</Text>
+                                <Text color={'grey'} fontSize={15} fontWeight={500}>Концессионный коэффициент/Text>
                                 <Text color={'black'} fontSize={18}
                                       fontWeight={500}>{rent.conditions.concessionPercent}%</Text>
                             </Stack>

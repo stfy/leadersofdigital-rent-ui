@@ -108,7 +108,7 @@ export const AcceptConditions: React.FC<IRent> = observer(function AcceptConditi
                                 </Stack>
 
                                 <Stack>
-                                    <Text color={'grey'} fontSize={15} fontWeight={500}>Конфессионный коэффициент</Text>
+                                    <Text color={'grey'} fontSize={15} fontWeight={500}>Концессионный коэффициент</Text>
                                     <Text color={'black'} fontSize={18}
                                           fontWeight={500}>{rent.conditions.concessionPercent}%</Text>
                                 </Stack>
