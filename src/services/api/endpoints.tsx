@@ -10,7 +10,9 @@ const Identity = {
 const Api = {
     list: '/api/v0/rent-app/rent',
     enterCreditConditions: '/api/v0/rent-app/rent/{id}/enterCreditConditions',
-    accept: '/api/v0/rent-app/rent/{id}/acceptCreditConditions'
+    accept: '/api/v0/rent-app/rent/{id}/acceptCreditConditions',
+
+    observeTx: '/api/v0/rent-app/rent/tx/{id}/status'
 }
 
 export const ENDPOINTS = {

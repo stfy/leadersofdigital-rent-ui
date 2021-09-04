@@ -2,9 +2,7 @@ import * as React from 'react'
 import {observer} from "mobx-react";
 import {useSortBy, useTable} from "react-table"
 import {chakra, Stack, Table, Tbody, Td as BaseTd, Text, Th, Thead, Tr} from "@chakra-ui/react"
-import {useService} from "../../core/decorators/service";
-import {IRent, RentList} from "../../services/RentList";
-import {useRouteMatch} from "react-router-dom";
+import {IRent} from "../../services/RentList";
 
 function convertDate(date: Date) {
     var yyyy = date.getFullYear().toString();
@@ -29,13 +27,14 @@ const columns = [
     {
         Header: "Действие",
         accessor: (row: IRent['events'][0]) => {
-            console.log()
-            if (row.type === 'PAYMENT') {
-
-                return 'Начисления от выручки'
+            const res = {
+                "PAYMENT": 'Начисления от выручки',
+                "PAY_DEBT": 'Погашение задолженности по аренде',
+                "PAY_CREDIT": 'Погашение задолженности по кредиту',
+                "RENT": ' Начало нового расчетного периода'
             }
 
-            return row.type
+            return res[row.type] || row.type
         },
     },
     {
@@ -47,7 +46,7 @@ const columns = [
     },
     {
         Header: "Отчисление",
-        Cell: ({ value }) => (<Text fontWeight={'700'}>{String(value)}</Text>),
+        Cell: ({value}) => (<Text fontWeight={'700'}>{String(value)}</Text>),
         accessor: (row: IRent['events'][0]) => {
             return `${row.debtPart} ₽`
         },
@@ -77,7 +76,8 @@ export const RentReceiptsHistory: React.FC<IRent> = observer(function RentReceip
                     {headerGroups.map((headerGroup) => (
                         <Tr {...headerGroup.getHeaderGroupProps()}>
                             {headerGroup.headers.map((column) => (
-                                <Th  {...column.getHeaderProps((column as any).getSortByToggleProps())} isNumeric={(column as any).isNumeric}>
+                                <Th  {...column.getHeaderProps((column as any).getSortByToggleProps())}
+                                     isNumeric={(column as any).isNumeric}>
                                     {column.render("Header")}
                                 </Th>
                             ))}

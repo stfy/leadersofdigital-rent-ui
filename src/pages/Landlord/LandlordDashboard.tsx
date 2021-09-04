@@ -1,28 +1,10 @@
 import * as React from 'react';
 import {observer} from "mobx-react";
-import {
-    chakra,
-    Flex,
-    Grid,
-    Heading,
-    Link,
-    Progress,
-    Stack,
-    Tab,
-    TabList,
-    TabPanel,
-    TabPanels,
-    Tabs,
-    Tag,
-    TagLabel,
-    Text
-} from "@chakra-ui/react";
-import {useHistory} from "react-router-dom";
+import {chakra, Flex, Grid, Heading, Stack, Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
 import {Input} from "../../ui/TextInput";
 import {SearchIcon} from "@chakra-ui/icons";
 import {useService} from "../../core/decorators/service";
-import {IRent, RentList} from "../../services/RentList";
-import {useRentStatus} from "../../hooks/status";
+import {RentList} from "../../services/RentList";
 import {RentCard} from "../../components/RentCard";
 
 
@@ -31,7 +13,6 @@ const SearchInput = chakra(Input, {
         paddingInlineStart: '45px',
         border: 0
     }
-
 })
 
 export const LandlordDashboard = observer(function LandlordDashboard() {

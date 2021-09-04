@@ -1,18 +1,6 @@
 import * as React from 'react'
 import {observer} from "mobx-react";
-import {
-    Box,
-    CircularProgress,
-    Divider,
-    Flex,
-    Heading,
-    Spacer,
-    Spinner,
-    Stack,
-    Tag,
-    TagLabel,
-    Text
-} from "@chakra-ui/react";
+import {Divider, Flex, Heading, Spinner, Stack, Tag, TagLabel, Text} from "@chakra-ui/react";
 import {RentReceipts} from "./RentReceipts";
 import {RentReceiptsHistory} from "./RentReceiptsHistory";
 import {RentActionHistory} from "./RentActionHistory";
@@ -24,7 +12,6 @@ import {useRentStatus} from "../../hooks/status";
 
 export const TenantView = observer(function TenantView(_props) {
     const rentList = useService(RentList)
-
     const profile = useService(ProfileService)
 
     React.useEffect(() => {
@@ -33,7 +20,7 @@ export const TenantView = observer(function TenantView(_props) {
 
     const rent = React.useMemo(() => {
         return rentList.list.find(r => r.tenantUUID === profile.info.companyId)
-    }, [])
+    }, [rentList.list])
 
     const status = useRentStatus(rent);
 
@@ -45,11 +32,9 @@ export const TenantView = observer(function TenantView(_props) {
         )
     }
 
-
     if (!rent) {
         return null;
     }
-
 
     return (
         <Stack width={'100%'} padding={8} spacing={'36px'}>
@@ -105,7 +90,7 @@ export const TenantView = observer(function TenantView(_props) {
                     <Heading as={'h1'}>{rent.tenantName}</Heading>
                 </Stack>
 
-                <Stack marginLeft={8} flexBasis={'60%'} flexGrow={1} >
+                <Stack marginLeft={8} flexBasis={'60%'} flexGrow={1}>
                     <Heading as={'h2'} fontSize={32}>Данные о соглашении</Heading>
 
                     <Flex height={'48px'} width={'100%'}/>
@@ -150,14 +135,17 @@ export const TenantView = observer(function TenantView(_props) {
                     <Flex>
                         <Stack flexBasis={'50%'} spacing="24px">
                             <Stack>
-                                <Text color={'grey'} fontSize={15} fontWeight={500}>Минимально гарантированный платеж</Text>
-                                <Text color={'black'} fontSize={18} fontWeight={500}>320 000 ₽</Text>
+                                <Text color={'grey'} fontSize={15} fontWeight={500}>Минимально гарантированный
+                                    платеж</Text>
+                                <Text color={'black'} fontSize={18}
+                                      fontWeight={500}>{rent.conditions.minGuaranteedConcession} ₽</Text>
                             </Stack>
                         </Stack>
                         <Stack spacing="24px">
                             <Stack>
                                 <Text color={'grey'} fontSize={15} fontWeight={500}>Конфессионный коэффициент</Text>
-                                <Text color={'black'} fontSize={18} fontWeight={500}>3%</Text>
+                                <Text color={'black'} fontSize={18}
+                                      fontWeight={500}>{rent.conditions.concessionPercent}%</Text>
                             </Stack>
 
                         </Stack>
@@ -167,9 +155,11 @@ export const TenantView = observer(function TenantView(_props) {
 
             <Divider/>
 
-            <AcceptConditions {...rent}/>
+            {rent.status === 'BANK_PROPOSED' && (<>
+                <AcceptConditions {...rent}/>
 
-            <Divider/>
+                <Divider/>
+            </>)}
 
             <Stack spacing={'24px'}>
                 <Heading as={'h2'} fontSize={32}>Кредитование</Heading>
@@ -178,13 +168,14 @@ export const TenantView = observer(function TenantView(_props) {
                     <Stack flexBasis={'50%'}>
                         <Stack>
                             <Text color={'grey'} fontSize={15} fontWeight={500}>Кредитный лимит</Text>
-                            <Text color={'black'} fontSize={18} fontWeight={500}>520 000 ₽</Text>
+                            <Text color={'black'} fontSize={18} fontWeight={500}>{rent.conditions.limit} ₽</Text>
                         </Stack>
 
                         <Stack>
                             <Text color={'grey'} fontSize={15} fontWeight={500}>Отчислений с выручки в счет погашения
                                 займа</Text>
-                            <Text color={'black'} fontSize={18} fontWeight={500}>1,5%</Text>
+                            <Text color={'black'} fontSize={18}
+                                  fontWeight={500}>{rent.conditions.earningCreditPercent} %</Text>
                         </Stack>
                     </Stack>
 
@@ -192,7 +183,7 @@ export const TenantView = observer(function TenantView(_props) {
                     <Stack>
                         <Stack>
                             <Text color={'grey'} fontSize={15} fontWeight={500}>Процентная ставка по кредиту </Text>
-                            <Text color={'black'} fontSize={18} fontWeight={500}>7,5%</Text>
+                            <Text color={'black'} fontSize={18} fontWeight={500}>{rent.conditions.interestRate} %</Text>
                         </Stack>
 
                         <Stack>
@@ -202,7 +193,6 @@ export const TenantView = observer(function TenantView(_props) {
                         </Stack>
                     </Stack>
                 </Flex>
-
             </Stack>
 
             <Divider/>
