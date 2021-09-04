@@ -39,7 +39,6 @@ export const RentReceipts: React.FC<IRent> = observer(function RentReceipts(rent
 
                         <Progress
                             value={((rent.conditions.paymentAmount - rent.totalDebt) / rent.conditions.paymentAmount) * 100}
-                            variant={'black'}
                             colorScheme={'orange'}
                             height={2}/>
 
@@ -54,12 +53,11 @@ export const RentReceipts: React.FC<IRent> = observer(function RentReceipts(rent
 
                         <Progress
                             value={((rent.conditions.minGuaranteedConcession - rent.concessionDebt) / rent.conditions.minGuaranteedConcession) * 100}
-                            variant={'black'}
                             colorScheme={'orange'}
                             height={2}/>
 
                         <Flex justify={'space-between'}>
-                            <Text>{Math.round(rent.concessionDebt)} ₽</Text>
+                            <Text>{Math.round(rent.conditions.minGuaranteedConcession - rent.concessionDebt)} ₽</Text>
                             <Text>{Math.round(rent.conditions.minGuaranteedConcession)} ₽</Text>
                         </Flex>
                     </Stack>
@@ -67,7 +65,7 @@ export const RentReceipts: React.FC<IRent> = observer(function RentReceipts(rent
                     <Stack width={'100%'} padding={1}>
                         <Text fontWeight={700}>Использование кредитных средств:</Text>
 
-                        <Progress value={(rent.creditDebt/ rent.conditions.limit) * 100} variant={'black'}
+                        <Progress value={(rent.creditDebt/ rent.conditions.limit) * 100}
                                   colorScheme={'orange'}
                                   height={2}/>
 
