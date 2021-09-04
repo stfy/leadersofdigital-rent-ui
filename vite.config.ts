@@ -18,8 +18,18 @@ export default defineConfig({
 
     server: {
         proxy: {
-            '/api/v0/': {
-                target: process.env.PROXY_API_URL || 'https://rent.weintegrator.com',
+            // '/api/v0/': {
+            //     target: process.env.PROXY_API_URL || 'https://rent.weintegrator.com',
+            //     changeOrigin: true,
+            //     secure: false,
+            //     configure: proxy => {
+            //         proxy.on('proxyReq', onProxyReq)
+            //         proxy.on('proxyRes', onProxyRes)
+            //     },
+            //     // rewrite: (path) => path.replace(/^\/api/, '')
+            // },
+            '/api/v0/vst-identity/': {
+                target: 'https://rent.weintegrator.com',
                 changeOrigin: true,
                 secure: false,
                 configure: proxy => {
@@ -27,7 +37,26 @@ export default defineConfig({
                     proxy.on('proxyRes', onProxyRes)
                 },
                 // rewrite: (path) => path.replace(/^\/api/, '')
-            }
+            },
+            '/api/v0/vst-oauth2/': {
+                target: 'https://rent.weintegrator.com',
+                changeOrigin: true,
+                secure: false,
+                configure: proxy => {
+                    proxy.on('proxyReq', onProxyReq)
+                    proxy.on('proxyRes', onProxyRes)
+                },
+            },
+            '/api/v0/rent-app/': {
+                target: process.env.PROXY_API_URL || 'https://rent.weintegrator.com',
+                changeOrigin: true,
+                secure: false,
+                configure: proxy => {
+                    proxy.on('proxyReq', onProxyReq)
+                    proxy.on('proxyRes', onProxyRes)
+                },
+                rewrite: (path) => path.replace(/^\/api\/v0\/rent-app/, '')
+            },
         }
     }
 })
