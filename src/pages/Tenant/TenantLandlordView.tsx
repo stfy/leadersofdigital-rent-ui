@@ -42,6 +42,10 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
     const rentList = useService(RentList)
 
     React.useEffect(() => {
+        if (rentList.requestStatus == 'success' || rentList.requestStatus == 'pending') {
+            return
+        }
+        
         rentList.getList()
     }, [])
 
@@ -61,7 +65,6 @@ export const TenantLandlordView = observer(function TenantLandlordView(_props) {
             statusName
         }
     }, [rent])
-
 
 
     if (rentList.requestStatus === 'pending') {
