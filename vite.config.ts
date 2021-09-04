@@ -19,8 +19,7 @@ export default defineConfig({
     server: {
         proxy: {
             '/api/v0/': {
-                target: 'https://rent.weintegrator.com',
-                // target: 'http://localhost:8080',
+                target: process.env.PROXY_API_URL || 'https://rent.weintegrator.com',
                 changeOrigin: true,
                 secure: false,
                 configure: proxy => {
